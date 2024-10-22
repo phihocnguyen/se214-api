@@ -1,0 +1,11 @@
+const express = require('express')
+const { createBlog, getDetailBlog, getAllBlogs, getAllBlogsByDoctor, updateView } = require('../controllers/blog.controller')
+const multer = require('multer')
+const upload = multer({dest: 'upload/'})
+const router = express.Router()
+router.post('/', upload.single('file'), createBlog)
+router.get('/:id', getDetailBlog)
+router.get('/', getAllBlogs)
+router.post('/getblog', getAllBlogsByDoctor)
+router.patch('/:blogId', updateView)
+exports.blogRoutes = router

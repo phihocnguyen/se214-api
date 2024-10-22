@@ -1,0 +1,166 @@
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "mysql"
+    url      = env("DATABASE_URL")
+}
+
+enum Role {
+    ADMIN
+    DOCTOR
+    USER
+}
+
+model Account {
+    id              Int            @id @default(autoincrement())
+    email           String
+    password        String
+    role            Role           @default(USER)
+    email_verified  DateTime?
+    image           String
+    createdAt       DateTime       @default(now())
+    updatedAt       DateTime       @updatedAt
+    verifiedEmail   VerifiedEmail? @relation(fields: [verifiedEmailId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    verifiedEmailId Int?
+    doctor          Doctor?
+    user            User?
+    Message         Message[]
+}
+
+model VerifiedEmail {
+    id        Int       @id @default(autoincrement())
+    email     String
+    token     String
+    createdAt DateTime  @default(now())
+    updatedAt DateTime  @updatedAt
+    account   Account[]
+}
+
+model User {
+    id               Int            @id @default(autoincrement())
+    firstName        String
+    lastName         String
+    phone            String
+    totalPrice       Int
+    account          Account        @relation(fields: [accountId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    accountId        Int            @unique
+    payment          Payment[]
+    appointments     Appointment[]
+    receivedMessages Conversation[] @relation("receivedMessages")
+    createdAt        DateTime       @default(now())
+    updatedAt        DateTime       @updatedAt
+}
+
+model Doctor {
+    id              Int            @id @default(autoincrement())
+    firstName       String
+    lastName        String
+    phone           String
+    introduction    String
+    clinic          String
+    experience      Int
+    specialization  String
+    account         Account        @relation(fields: [accountId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    accountId       Int            @unique
+    workingSchedule WorkSchedule[]
+    blogs           Blog[]
+    appointments    Appointment[]
+    sentMessages    Conversation[] @relation("sentMessages")
+    createdAt       DateTime       @default(now())
+    updatedAt       DateTime       @updatedAt
+}
+
+model WorkSchedule {
+    id        Int      @id @default(autoincrement())
+    day       String
+    startTime String
+    endTime   String
+    status    String
+    doctorId  Int
+    doctor    Doctor   @relation(fields: [doctorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model WorkingShifts {
+    id          Int          @id @default(autoincrement())
+    time        String
+    date        String
+    type        String
+    appointment Appointment?
+    createdAt   DateTime     @default(now())
+    updatedAt   DateTime     @updatedAt
+
+    @@unique([date, time])
+}
+
+model Appointment {
+    id             Int           @id @default(autoincrement())
+    status         String
+    note           String
+    noteImage1     String?
+    noteImage2     String?
+    noteImage3     String?
+    workingShiftId Int           @unique
+    workingShift   WorkingShifts @relation(fields: [workingShiftId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    doctorId       Int
+    doctor         Doctor        @relation(fields: [doctorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    userId         Int
+    user           User          @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    createdAt      DateTime      @default(now())
+    updatedAt      DateTime      @updatedAt
+}
+
+model Message {
+    id             Int           @id @default(autoincrement())
+    file           String
+    content        String
+    date           DateTime
+    createdAt      DateTime      @default(now())
+    updatedAt      DateTime      @updatedAt
+    Conversation   Conversation? @relation(fields: [conversationId], references: [id])
+    conversationId String?
+    senderId       Int
+    sender         Account       @relation(fields: [senderId], references: [id])
+}
+
+model Blog {
+    id        Int      @id @default(autoincrement())
+    title     String
+    content   String   @db.LongText
+    date      DateTime
+    totalView Int
+    link      String
+    thumbnail String
+    doctorId  Int
+    doctor    Doctor   @relation(fields: [doctorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model Payment {
+    id            Int      @id @default(autoincrement())
+    amount        Int
+    paymentMethod String
+    status        String
+    content       String
+    date          DateTime
+    user          User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    userId        Int
+    createdAt     DateTime @default(now())
+    updatedAt     DateTime @updatedAt
+}
+
+model Conversation {
+    id            String    @id @default(cuid())
+    lastMessageAt DateTime  @default(now())
+    seen          Boolean
+    lastMessage   String
+    messages      Message[]
+    userId        Int
+    doctorId      Int
+    user          User      @relation(name: "receivedMessages", fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    doctor        Doctor    @relation(name: "sentMessages", fields: [doctorId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+}
