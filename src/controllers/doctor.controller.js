@@ -25,3 +25,20 @@ exports.getDoctors = async (req, res, next) => {
         next(err)
     }
 }
+exports.updateDoctor = async (req, res, next) => {
+    try {
+        const response = await doctorService.updateDoctor(req.body, req.file)
+        res.status(200).json(response)
+    } catch (err) {
+        next(err)
+    }
+}
+
+exports.deleteDoctor = async (req, res, next) => {
+    try {
+        const result = await doctorService.deleteDoctor(req.params.id)
+        res.status(200).json(result)
+    } catch (err) {
+        next(err)
+    }
+}

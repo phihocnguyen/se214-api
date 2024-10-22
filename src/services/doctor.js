@@ -71,9 +71,62 @@ exports.findDoctor = async (specialization) => {
 }
 exports.getDoctors = async () => {
     try {
-        const result = await db.doctor.findMany({})
+        const result = await db.doctor.findMany({
+            include: {
+                account: true
+            }
+        })
         return result
     } catch (err) {
+        return new Error(err)
+    }
+}
+
+exports.updateDoctor = async (data, file) => {
+    let newPath = ''
+    if (file) {
+        const { originalname, path } = file
+        const parts = originalname.split('.')
+        const ext = parts[parts.length - 1]
+        newPath = path + '.' + ext
+        data.image = newPath
+        fs.renameSync(path, newPath)
+    }
+
+    const { id } = data
+    const {experience} = data
+    delete data.id
+    delete data.experience
+    try {
+        const response = await db.doctor.update(
+            {
+                where: {
+                    id: parseInt(id)
+                },
+                data: {
+                    ...data,
+                    experience: parseInt(experience),
+                }
+            }
+        )
+        return response
+    } catch (err){
+        console.log(err)
+        return new Error(err)
+    }
+}
+
+exports.deleteDoctor = async (id) => {
+    try {
+        const result = await db.doctor.delete(
+            {
+                where: {
+                    id: parseInt(id)
+                }
+            }
+        )
+        return result
+    } catch (err){
         return new Error(err)
     }
 }
