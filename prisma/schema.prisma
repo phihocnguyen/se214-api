@@ -22,7 +22,7 @@ model Account {
     image           String
     createdAt       DateTime       @default(now())
     updatedAt       DateTime       @updatedAt
-    verifiedEmail   VerifiedEmail? @relation(fields: [verifiedEmailId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+    verifiedEmail   VerifiedEmail? @relation(fields: [verifiedEmailId], references: [id])
     verifiedEmailId Int?
     doctor          Doctor?
     user            User?
@@ -43,6 +43,7 @@ model User {
     firstName        String
     lastName         String
     phone            String
+    address          String
     totalPrice       Int
     account          Account        @relation(fields: [accountId], references: [id], onDelete: Cascade, onUpdate: Cascade)
     accountId        Int            @unique

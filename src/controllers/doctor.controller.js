@@ -11,8 +11,9 @@ exports.addDoctor = async (req, res, next) => {
 }
 exports.findDoctor = async (req, res, next) => {
     try {
-        const specialization = await searchAPI(req.body.symptom)
-        res.status(200).json(specialization)
+        const specialization = req.body.symptom && await searchAPI(req.body.symptom)
+        const result = await doctorService.findDoctor(req.body.specialization || specialization)
+        res.status(200).json(result)
     } catch (err){
         next(err)
     }
@@ -22,6 +23,14 @@ exports.getDoctors = async (req, res, next) => {
         const result = await doctorService.getDoctors()
         res.status(200).json(result)
     } catch (err) {
+        next(err)
+    }
+}
+exports.findDoctorById = async (req, res, next) => {
+    try {
+        const result = await doctorService.findDoctorById(req.params.id)
+        res.status(200).json(result)
+    } catch (err){
         next(err)
     }
 }

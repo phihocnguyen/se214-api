@@ -4,6 +4,7 @@ const db = new PrismaClient()
 const bcrypt = require('bcrypt')
 const { generateVerificationToken } = require("../libs/token")
 const fs = require('fs')
+const { initWsByDoctor } = require("./workingSchedule")
 exports.addDoctor = async (data, file) => {
     const salt = bcrypt.genSaltSync(10)
     const { originalname, path } = file
@@ -20,7 +21,7 @@ exports.addDoctor = async (data, file) => {
                 }
             }
         )
-        if (existUser) return res.status(303).json('user exists')
+        if (existUser) return false
         const verificationToken = await generateVerificationToken(email)
         const newDoctor = await db.doctor.create(
             {
@@ -45,6 +46,7 @@ exports.addDoctor = async (data, file) => {
                 }
             }
         )
+        await initWsByDoctor(newDoctor.id)
         return {
             newDoctor: newDoctor,
             token: verificationToken.token
@@ -57,12 +59,15 @@ exports.addDoctor = async (data, file) => {
 
 exports.findDoctor = async (specialization) => {
     try {
-        const result = await db.doctor.findFirst(
+        const result = await db.doctor.findMany(
             {
                 where: {
-                    specialization
+                    specialization: {contains: specialization}
+                },
+                include: {
+                    account: true
                 }
-            }
+            }   
         )
         return result
     } catch (err) {
@@ -78,6 +83,25 @@ exports.getDoctors = async () => {
         })
         return result
     } catch (err) {
+        return new Error(err)
+    }
+}
+
+exports.findDoctorById = async (id) => {
+    try {
+        const result = await db.doctor.findUnique(
+            {
+                where: {
+                    id: parseInt(id)
+                },
+                include: {
+                    account: true
+                }
+            }
+        )
+        return result
+    } catch (err) {
+        console.log(err)
         return new Error(err)
     }
 }

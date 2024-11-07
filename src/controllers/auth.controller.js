@@ -43,7 +43,7 @@ exports.login = async (req, res, next) => {
 
 exports.register = async (req, res, next) => {
     const salt = bcrypt.genSaltSync(10)
-    const { email, password, firstName, lastName, phone, image = 'none', totalPrice } = req.body
+    const { email, password, firstName, lastName, phoneNumber, image = 'none', address, totalPrice = 0 } = req.body
     try {
         const existUser = await prisma.account.findFirst(
             {
@@ -60,7 +60,8 @@ exports.register = async (req, res, next) => {
                 data: {
                     firstName,
                     lastName,
-                    phone,
+                    phone: phoneNumber,
+                    address,
                     totalPrice,
                     account: {
                         create: {

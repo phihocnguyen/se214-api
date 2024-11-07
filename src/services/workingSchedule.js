@@ -2,6 +2,27 @@ const { PrismaClient } = require("@prisma/client");
 
 const db = new PrismaClient()
 
+exports.initWsByDoctor = async (id) => {
+    try {
+        for (let i = 0; i < 6; i++){
+            await db.workSchedule.create(
+                {
+                    data: {
+                        startTime: '00:00',
+                        endTime: '00:00',
+                        doctorId: parseInt(id),
+                        day: 'Thứ ' + (i + 2),
+                        status: 'Available'
+                    }
+                }
+            )
+        }
+        return true
+    } catch (err){
+        return new Error(err)
+    }
+}
+
 exports.getWsByDoctor = async (id) => {
     try {
         const result = await db.workSchedule.findMany(

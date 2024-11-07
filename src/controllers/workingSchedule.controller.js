@@ -1,5 +1,6 @@
 const wsService = require("../services/workingSchedule")
 
+
 exports.getWsByDoctor = async (req, res, next) => {
     try {
         const result = await wsService.getWsByDoctor(req.params.id)
