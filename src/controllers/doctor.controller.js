@@ -4,6 +4,7 @@ const doctorService = require("../services/doctor")
 exports.addDoctor = async (req, res, next) => {
     try {
         const newDoctor = await doctorService.addDoctor(req.body, req.file)
+        console.log(newDoctor)
         res.status(201).json(newDoctor)
     } catch (err) {
         next(err)

@@ -23,6 +23,7 @@ exports.createBlog = async (data, file) => {
                 }
             }
         )
+        
         return newBlog
     } catch (err){
         console.log(err)

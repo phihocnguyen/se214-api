@@ -4,6 +4,7 @@ const { generateVerificationToken } = require('../libs/token')
 const prisma = new PrismaClient()
 const jwt = require('jsonwebtoken')
 const fs = require('fs')
+const { sendEmail } = require('../libs/sendEmail')
 const refreshTokens = []
 
 exports.login = async (req, res, next) => {
@@ -22,6 +23,7 @@ exports.login = async (req, res, next) => {
         if (existingUser) {
             if(!existingUser.email_verified) {
                 const verificationToken = await generateVerificationToken(existingUser.email)
+                sendEmail(existingUser.email, verificationToken.token)
                 return res.status(200).json({message: 'Confirmation email sent', token: verificationToken.token})
             }
             correctPassword = bcrypt.compareSync(password, existingUser.password)

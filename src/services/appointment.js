@@ -73,7 +73,11 @@ exports.getAppointmentsByDoctor = async (doctorId, status) => {
                     status: status
                 }, 
                 include: {
-                    user: true,
+                    user: {
+                        include: {
+                            account: true
+                        }
+                    },
                     workingShift: true
                 }
             }
