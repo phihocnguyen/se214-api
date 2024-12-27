@@ -1,5 +1,5 @@
 const { PrismaClient, Role } = require("@prisma/client")
-
+const {default: v2Cloudinary} = require("../utils/cloudinary")
 const db = new PrismaClient()
 const bcrypt = require('bcrypt')
 const { generateVerificationToken } = require("../libs/token")
@@ -7,11 +7,16 @@ const fs = require('fs')
 const { initWsByDoctor } = require("./workingSchedule")
 exports.addDoctor = async (data, file) => {
     const salt = bcrypt.genSaltSync(10)
-    const { originalname, path } = file
-    const parts = originalname.split('.')
-    const ext = parts[parts.length - 1]
-    const newPath = path + '.' + ext
-    fs.renameSync(path, newPath)
+    let url = ''
+    await v2Cloudinary.uploader.upload(file.path, (err, result) => {
+        if (err) {
+            return null
+        }
+        else {
+            url = result.url
+            console.log(url)
+        }
+    })
     const { email, password, firstName, lastName, phone, introduction, clinic, experience, specialization } = data
     try {
         const existUser = await db.account.findFirst(
@@ -39,7 +44,7 @@ exports.addDoctor = async (data, file) => {
                             password: bcrypt.hashSync(password, salt),
                             verifiedEmailId: verificationToken.id,
                             email_verified: new Date(),
-                            image: newPath,
+                            image: url,
                             role: Role.DOCTOR
                         }
                     }

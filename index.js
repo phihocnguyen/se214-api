@@ -13,7 +13,6 @@ app.use(cors(
         credentials: true
     }
 ))
-app.use('/upload', express.static(__dirname + '/upload'))
 app.use('/api', api)
 app.use(errorHandler)
 let refreshTokens = []

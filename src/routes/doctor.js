@@ -1,7 +1,6 @@
 const express = require('express')
 const { addDoctor, findDoctor, getDoctors, updateDoctor, deleteDoctor, findDoctorById } = require('../controllers/doctor.controller')
-const multer = require('multer')
-const upload = multer({dest: 'upload/'})
+const { default: upload } = require('../middlewares/multer')
 const router = express.Router()
 
 router.post('/', upload.single('file'), addDoctor)
