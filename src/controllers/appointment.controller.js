@@ -20,7 +20,7 @@ exports.getAppointmentsByUser = async (req, res, next) => {
 }
 exports.getAppointmentsByDoctor = async (req, res, next) => {
     try {
-        const result = await appointmentService.getAppointmentsByDoctor(req.body.doctorId, req.body.status)
+        const result = await appointmentService.getAppointmentsByDoctor(req.body.doctorId, req.body.status, req.body.date)
         res.status(200).json(result)
     } catch (err){
         next(err)

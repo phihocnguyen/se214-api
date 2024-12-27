@@ -7,8 +7,8 @@ exports.createConversation = async (data) => {
         const existConversation = await db.conversation.findFirst(
             {
                 where: {
-                    doctorId: parseInt(userId1),
-                    userId: parseInt(userId2)
+                    doctorId: userId1,
+                    userId: userId2
                 }
             }
         )
@@ -19,7 +19,7 @@ exports.createConversation = async (data) => {
                     lastMessage: ' ',
                     seen: false,
                     doctorId: userId1, 
-                    userId: parseInt(userId2)
+                    userId: userId2
                 }
             }
         )
@@ -36,8 +36,8 @@ exports.getConversationsByUser = async (userId) => {
             {
                 where: {
                     OR: [
-                        {doctorId: parseInt(userId)},
-                        {userId: parseInt(userId)}
+                        {doctorId: userId},
+                        {userId: userId}
                     ]
                 },
                 include: {
@@ -58,8 +58,8 @@ exports.getConversation = async (data) => {
         const result = await db.conversation.findFirst(
             {
                 where: {
-                    doctorId: parseInt(userId1) || parseInt(userId2),
-                    uesrId: parseInt(userId1) || parseInt(userId2)
+                    doctorId: userId1 || userId2,
+                    uesrId: userId1 || userId2
                 }
             }
         )

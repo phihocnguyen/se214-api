@@ -32,7 +32,7 @@ model Account {
 model VerifiedEmail {
     id        String       @id @default(cuid())
     email     String
-    token     String
+    token     String @db.Text
     createdAt DateTime  @default(now())
     updatedAt DateTime  @updatedAt
     account   Account[]

@@ -13,7 +13,7 @@ exports.createMessage = async (data) => {
                     content,
                     date,
                     conversationId: conversationId,
-                    senderId: parseInt(senderId)
+                    senderId: senderId
                 }
             }
         )

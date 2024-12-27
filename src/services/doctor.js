@@ -97,7 +97,7 @@ exports.findDoctorById = async (id) => {
         const result = await db.doctor.findUnique(
             {
                 where: {
-                    id: parseInt(id)
+                    id: id
                 },
                 include: {
                     account: true

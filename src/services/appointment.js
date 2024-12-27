@@ -31,8 +31,8 @@ exports.createAppointment = async (data, files) => {
                     noteImage1: newPaths[0] || '',
                     noteImage2: newPaths[1] || '',
                     noteImage3: newPaths[2] || '',
-                    doctorId: parseInt(doctorId),
-                    userId: parseInt(userId),
+                    doctorId: doctorId,
+                    userId: userId,
                     workingShiftId: newWorkingShift.id
                 }
             }
@@ -49,7 +49,7 @@ exports.getAppointmentsByUser = async (userId) => {
         const result = await db.appointment.findMany(
             {
                 where: {
-                    userId: parseInt(userId)
+                    userId: userId
                 },
                 include: {
                     workingShift: true,
@@ -64,13 +64,16 @@ exports.getAppointmentsByUser = async (userId) => {
     }
 }
 
-exports.getAppointmentsByDoctor = async (doctorId, status) => {
+exports.getAppointmentsByDoctor = async (doctorId, status, date) => {
     try {
         const result = await db.appointment.findMany(
             {
                 where: {
-                    doctorId: parseInt(doctorId),
-                    status: status
+                    doctorId: doctorId,
+                    status: status,
+                    workingShift: {
+                        date
+                    }
                 }, 
                 include: {
                     user: {
@@ -95,7 +98,7 @@ exports.updateStatus = async (data) => {
         const result = await db.appointment.update(
             {
                 where: {
-                    id: parseInt(appointmentId)
+                    id: appointmentId
                 },
                 data: {
                     status

@@ -41,7 +41,7 @@ exports.getWsByDay = async (req, res, next) => {
             default: 
                 break;
         }
-        const result = await wsService.getWsByDay(day)
+        const result = await wsService.getWsByDay(day, req.params.id)
         res.status(200).json(result)
     } catch (err){
         console.log(err)

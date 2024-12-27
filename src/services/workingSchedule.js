@@ -4,13 +4,14 @@ const db = new PrismaClient()
 
 exports.initWsByDoctor = async (id) => {
     try {
+        console.log(id)
         for (let i = 0; i < 6; i++){
             await db.workSchedule.create(
                 {
                     data: {
                         startTime: '00:00',
                         endTime: '00:00',
-                        doctorId: parseInt(id),
+                        doctorId: id,
                         day: 'Thứ ' + (i + 2),
                         status: 'Available'
                     }
@@ -28,7 +29,7 @@ exports.getWsByDoctor = async (id) => {
         const result = await db.workSchedule.findMany(
             {
                 where: {
-                    doctorId: parseInt(id)
+                    doctorId: id
                 }
             }
         )
@@ -39,12 +40,13 @@ exports.getWsByDoctor = async (id) => {
     }
 }
 
-exports.getWsByDay = async (day) => {
+exports.getWsByDay = async (day, id) => {
     try {
          const result = await db.workSchedule.findFirst(
             {
                 where: {
-                    day
+                    day,
+                    doctorId: id
                 }
             }
          )
@@ -61,7 +63,7 @@ exports.updateWs = async (doctorId, data) => {
             const existSchedule = await db.workSchedule.findFirst(
                 {
                     where: {
-                        doctorId: parseInt(doctorId),
+                        doctorId: doctorId,
                         day: data[i].day
                     }
                 }
