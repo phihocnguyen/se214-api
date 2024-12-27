@@ -29,7 +29,7 @@ exports.login = async (req, res, next) => {
             correctPassword = bcrypt.compareSync(password, existingUser.password)
         }
         if (existingUser && correctPassword) {
-            const accessToken = jwt.sign({id: existingUser.id, email: existingUser.email, role: existingUser.role}, process.env.ACCESS_TOKEN, {expiresIn: '30m'})
+            const accessToken = jwt.sign({id: existingUser.id, email: existingUser.email, role: existingUser.role}, process.env.ACCESS_TOKEN, {expiresIn: '15m'})
             const refreshToken = jwt.sign({id: existingUser.id, email: existingUser.email, role: existingUser.role}, process.env.REFRESH_TOKEN)
             refreshTokens.push(refreshToken)
             res.cookie('token', refreshToken).json({
