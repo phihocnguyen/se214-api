@@ -18,7 +18,16 @@ exports.createMessage = async (data) => {
             }
         )
         const receiverIdSocketId = getReceiverSocketId(receiverId)
-        console.log(receiverId)
+        await db.conversation.update(
+            {
+                where: {
+                    id: conversationId
+                },
+                data: {
+                    lastMessage: `${senderId}:${content}`
+                }
+            }
+        )
         if (receiverIdSocketId){
             io.to(receiverIdSocketId).emit('newMessage', newMessage)
         }

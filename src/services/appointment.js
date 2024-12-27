@@ -52,8 +52,20 @@ exports.getAppointmentsByUser = async (userId) => {
                     userId: userId
                 },
                 include: {
-                    workingShift: true,
-                    doctor: true
+                    workingShift: {
+                        select: {
+                            time: true,
+                            date: true
+                        }
+                    },
+                    user: true,
+                    doctor: {
+                        select: {
+                            firstName: true,
+                            lastName: true,
+                            account: true
+                        }
+                    }
                 }
             }
         )
@@ -110,4 +122,31 @@ exports.updateStatus = async (data) => {
         console.log(err)
         return new Error(err)
     }
+}
+
+exports.getDetailAppointment = async (id) => {
+    const result = await db.appointment.findUnique(
+        {
+            where: {
+                id
+            },
+            include: {
+                workingShift: {
+                    select: {
+                        time: true,
+                        date: true
+                    }
+                },
+                user: true,
+                doctor: {
+                    select: {
+                        firstName: true,
+                        lastName: true,
+                        account: true
+                    }
+                }
+            }
+        }
+    )
+    return result
 }

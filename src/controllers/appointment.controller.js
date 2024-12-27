@@ -35,3 +35,12 @@ exports.updateStatus = async (req, res, next) => {
         next(err)
     }
 }
+
+exports.getDetailAppointment = async (req, res, next) => {
+    try {
+        const result = await appointmentService.getDetailAppointment(req.params.id)
+        res.status(200).json(result)
+    } catch (err) {
+        next(err)
+    }
+}
