@@ -19,7 +19,7 @@ exports.createBlog = async (data, file) => {
                     link: 'http://localhost:5173/blog-detail/',
                     totalView: 0,
                     thumbnail: newPath,
-                    doctorId: parseInt(doctorId)
+                    doctorId: doctorId
                 }
             }
         )
@@ -36,7 +36,7 @@ exports.getBlogById = async (id) => {
         const existBlog = await db.blog.findUnique(
             {
                 where: {
-                    id: parseInt(id)
+                    id: id
                 },
                 include: {
                     doctor: true
@@ -67,7 +67,7 @@ exports.getAllBlogsByDoctor = async (doctorId) => {
     try {
         const result = await db.blog.findMany({
             where: {
-                doctorId: parseInt(doctorId)
+                doctorId: doctorId
             }
         })
         return result
@@ -81,7 +81,7 @@ exports.updateView = async (blogId) => {
         const result = await  db.blog.update(
             {
                 where: {
-                    id: parseInt(blogId)
+                    id: blogId
                 },
                 data: {
                     totalView: {increment: 1}

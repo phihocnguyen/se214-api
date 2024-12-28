@@ -6,7 +6,7 @@ const { generateVerificationToken } = require("../libs/token")
 const fs = require('fs')
 const { initWsByDoctor } = require("./workingSchedule")
 exports.addDoctor = async (data, file) => {
-    const salt = bcrypt.genSaltSync(10)
+const salt = bcrypt.genSaltSync(10)
     let url = ''
     await v2Cloudinary.uploader.upload(file.path, (err, result) => {
         if (err) {
