@@ -131,6 +131,8 @@ model Blog {
     id        String       @id @default(cuid())
     title     String
     content   String  
+    category String?
+    subCategory String?
     date      DateTime
     totalView Int
     link      String
