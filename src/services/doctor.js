@@ -1,5 +1,5 @@
 const { PrismaClient, Role } = require("@prisma/client")
-const {default: v2Cloudinary} = require("../utils/cloudinary")
+const {v2Cloudinary} = require("../utils/cloudinary")
 const db = new PrismaClient()
 const bcrypt = require('bcrypt')
 const { generateVerificationToken } = require("../libs/token")

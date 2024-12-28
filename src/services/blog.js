@@ -1,24 +1,29 @@
 const { PrismaClient, Role } = require("@prisma/client")
-const fs = require('fs')
 const db = new PrismaClient()
-
+const {v2Cloudinary} = require("../utils/cloudinary")
 exports.createBlog = async (data, file) => {
-    const { doctorId, title, content } = data
-    const { originalname, path } = file
-    const parts = originalname.split('.')
-    const ext = parts[parts.length - 1]
-    const newPath = path + '.' + ext
-    fs.renameSync(path, newPath)
+    const { doctorId, title, content, category, subCategory } = data
+    let url = ''
+    await v2Cloudinary.uploader.upload(file.path, (err, result) => {
+        if (err) {
+            return null
+        }
+        else {
+            url = result.url
+        }
+    })
     try {
         const newBlog = await db.blog.create(
             {
                 data: {
                     title,
                     content,
+                    category,
+                    subCategory,
                     date: new Date(),
                     link: 'http://localhost:5173/blog-detail/',
                     totalView: 0,
-                    thumbnail: newPath,
+                    thumbnail: url,
                     doctorId: doctorId
                 }
             }
