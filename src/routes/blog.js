@@ -1,5 +1,5 @@
 const express = require('express')
-const { createBlog, getDetailBlog, getAllBlogs, getAllBlogsByDoctor, updateView } = require('../controllers/blog.controller')
+const { createBlog, getDetailBlog, getAllBlogs, getAllBlogsByDoctor, updateView, getBlogByCategory, searchBlog } = require('../controllers/blog.controller')
 const { upload } = require('../middlewares/multer')
 const router = express.Router()
 router.post('/', upload.single('file'), createBlog)
@@ -7,4 +7,6 @@ router.get('/:id', getDetailBlog)
 router.get('/', getAllBlogs)
 router.post('/getblog', getAllBlogsByDoctor)
 router.patch('/:blogId', updateView)
+router.get('/category/:category', getBlogByCategory)
+router.get('/search/:category', searchBlog) 
 exports.blogRoutes = router

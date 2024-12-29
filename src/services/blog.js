@@ -98,3 +98,28 @@ exports.updateView = async (blogId) => {
         return new Error(err)
     }
 }
+
+exports.getBlogByCategory = async (category) => {
+    const result = await db.blog.findMany(
+        {
+            where: {
+                category
+            }
+        }
+    )
+    return result
+}
+
+exports.searchBlog = async (query, category) => {
+    const result = await db.blog.findMany(
+        {
+            where: {
+                category,
+                title: {
+                    contains: query
+                }
+            }
+        }
+    )
+    return result
+}

@@ -49,3 +49,20 @@ exports.updateView = async (req, res, next) => {
         next(err)
     }
 }
+
+exports.getBlogByCategory = async (req, res, next) => {
+    try {
+        const result = await blogService.getBlogByCategory(req.params.category)
+        res.status(200).json(result)
+    } catch (err) {
+        next(err)
+    }
+}
+exports.searchBlog = async (req, res, next) => {
+    try {
+        const result = await blogService.searchBlog(req.query.search, req.params.category)
+        res.status(200).json(result)
+    } catch (err) {
+        next(err)
+    }
+}
