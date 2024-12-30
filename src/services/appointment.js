@@ -3,6 +3,8 @@ const fs = require('fs')
 const db = new PrismaClient()
 exports.createAppointment = async (data, files) => {
     const { time, date, status, type, note, doctorId, userId} = data
+    const [day, month, year] = date.split('/');
+    const newDate = `${year}/${month.padStart(2, '0')}/${day.padStart(2, '0')}`;
     const newPaths = []
     for (const file of files){
         const { originalname, path } = file
@@ -18,7 +20,7 @@ exports.createAppointment = async (data, files) => {
             {
                 data: {
                     time,
-                    date,
+                    date: newDate,
                     type
                 }
             }
@@ -131,21 +133,59 @@ exports.getDetailAppointment = async (id) => {
                 id
             },
             include: {
-                workingShift: {
-                    select: {
-                        time: true,
-                        date: true
-                    }
-                },
-                user: true,
-                doctor: {
-                    select: {
-                        firstName: true,
-                        lastName: true,
-                        account: true
+                    workingShift: {
+                        select: {
+                            time: true,
+                            date: true
+                        }
+                    },
+                    user: {
+                        select: {
+                            account: true
+                        }  
+                    },
+                    doctor: {
+                        select: {
+                            firstName: true,
+                            lastName: true,
+                            account: true
+                        }
                     }
                 }
-            }
+        }
+    )
+    return result
+}
+
+exports.getAppointmentsByWeek = async (startDate, endDate) => {
+    const [day1, month1, year1] = startDate.split('/');
+    const [day2, month2, year2] = endDate.split('/');
+    const formattedDate1 = `${year1}/${month1.padStart(2, '0')}/${day1.padStart(2, '0')}`;
+    const formattedDate2 = `${year2}/${month2.padStart(2, '0')}/${day2.padStart(2, '0')}`;
+
+    const result = await db.appointment.findMany(
+        {
+            where: {
+                workingShift: {
+                    date: {
+                        gte: formattedDate1,
+                        lte: formattedDate2
+                    }
+                }
+            },
+            include: {
+                    workingShift: {
+                        select: {
+                            time: true,
+                            date: true
+                        }
+                    },
+                    user: {
+                        select: {
+                            account: true
+                        }  
+                    }
+                }
         }
     )
     return result

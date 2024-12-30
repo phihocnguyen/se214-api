@@ -44,3 +44,12 @@ exports.getDetailAppointment = async (req, res, next) => {
         next(err)
     }
 }
+
+exports.getAppointmentsByWeek = async (req, res, next) => {
+    try {
+        const result = await appointmentService.getAppointmentsByWeek(req.query.startDate, req.query.endDate)
+        res.status(200).json(result)
+    } catch (err) {
+        next(err)
+    }
+}
