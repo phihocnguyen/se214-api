@@ -3,7 +3,6 @@ const {v2Cloudinary} = require("../utils/cloudinary")
 const db = new PrismaClient()
 const bcrypt = require('bcrypt')
 const { generateVerificationToken } = require("../libs/token")
-const fs = require('fs')
 const { initWsByDoctor } = require("./workingSchedule")
 exports.addDoctor = async (data, file) => {
 const salt = bcrypt.genSaltSync(10)
@@ -14,7 +13,6 @@ const salt = bcrypt.genSaltSync(10)
         }
         else {
             url = result.url
-            console.log(url)
         }
     })
     const { email, password, firstName, lastName, phone, introduction, clinic, experience, specialization } = data
@@ -112,15 +110,16 @@ exports.findDoctorById = async (id) => {
 }
 
 exports.updateDoctor = async (data, file) => {
-    let newPath = ''
-    if (file) {
-        const { originalname, path } = file
-        const parts = originalname.split('.')
-        const ext = parts[parts.length - 1]
-        newPath = path + '.' + ext
-        data.image = newPath
-        fs.renameSync(path, newPath)
-    }
+    let url = ''
+    await v2Cloudinary.uploader.upload(file.path, (err, result) => {
+        if (err) {
+            return null
+        }
+        else {
+            url = result.url
+            data.image = url
+        }
+    })
 
     const { id } = data
     const {experience} = data
@@ -130,7 +129,7 @@ exports.updateDoctor = async (data, file) => {
         const response = await db.doctor.update(
             {
                 where: {
-                    id: parseInt(id)
+                    id: id
                 },
                 data: {
                     ...data,
@@ -150,7 +149,7 @@ exports.deleteDoctor = async (id) => {
         const result = await db.doctor.delete(
             {
                 where: {
-                    id: parseInt(id)
+                    id: id
                 }
             }
         )
