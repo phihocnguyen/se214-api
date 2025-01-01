@@ -22,7 +22,7 @@ io.on('connection', socket => {
     if (userId != 'undefined') userSocketMap[userId] = socket.id
 
     io.emit("getOnlineUsers", Object.keys(userSocketMap))
-    socket.emit('"me', socket.id)
+    socket.emit('me', socket.id)
 
     socket.on("callUser", data => {
         io.to(data.userToCall).emit("callUser", {signal: data.signalData, from: data.from, name: data.name})
