@@ -1,18 +1,20 @@
 const { PrismaClient } = require("@prisma/client")
-const fs = require('fs')
 const db = new PrismaClient()
+const {v2Cloudinary} = require("../utils/cloudinary")
 exports.createAppointment = async (data, files) => {
     const { time, date, status, type, note, doctorId, userId} = data
     const [day, month, year] = date.split('/');
     const newDate = `${year}/${month.padStart(2, '0')}/${day.padStart(2, '0')}`;
     const newPaths = []
     for (const file of files){
-        const { originalname, path } = file
-        const parts = originalname.split('.')
-        const ext = parts[parts.length - 1]
-        const newPath = path + '.' + ext
-        fs.renameSync(path, newPath)
-        newPaths.push(newPath)
+        await v2Cloudinary.uploader.upload(file.path, (err, result) => {
+            if (err) {
+                return null
+            }
+            else {
+                newPaths.push(result.url)
+            }
+        })
     }
     
     try {
