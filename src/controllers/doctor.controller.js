@@ -52,3 +52,12 @@ exports.deleteDoctor = async (req, res, next) => {
         next(err)
     }
 }
+
+exports.findDoctorBySpecialty = async (req, res, next) => {
+    try {
+        const result = await doctorService.findDoctorBySpecialty(req.params.specialty)
+        res.status(200).json(result)
+    } catch (err) {
+        next(err)
+    }
+}

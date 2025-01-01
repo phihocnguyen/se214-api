@@ -45,7 +45,7 @@ exports.login = async (req, res, next) => {
 
 exports.register = async (req, res, next) => {
     const salt = bcrypt.genSaltSync(10)
-    const { email, password, firstName, lastName, phoneNumber, image = 'none', address, totalPrice = 0 } = req.body
+    const { email, password, firstName, lastName, phoneNumber, image = 'https://miamistonesource.com/wp-content/uploads/2018/05/no-avatar-25359d55aa3c93ab3466622fd2ce712d1.jpg', address, totalPrice = 0 } = req.body
     try {
         const existUser = await prisma.account.findFirst(
             {

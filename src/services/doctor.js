@@ -159,3 +159,19 @@ exports.deleteDoctor = async (id) => {
         return new Error(err)
     }
 }
+
+exports.findDoctorBySpecialty = async (specialty) => {
+    const result = await db.doctor.findMany(
+        {
+            where: {
+                specialization: {
+                    contains: specialty
+                }
+            },
+            include: {
+                    account: true
+                }
+        }
+    )
+    return result
+}
