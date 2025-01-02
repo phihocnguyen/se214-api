@@ -148,7 +148,6 @@ model Payment {
     amount    Int
     image     String   @db.Text
     status    String
-    content   String
     date      DateTime
     user      User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
     userId    String
