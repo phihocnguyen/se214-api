@@ -24,13 +24,22 @@ io.on('connection', socket => {
     io.emit("getOnlineUsers", Object.keys(userSocketMap))
     socket.emit('me', socket.id)
 
-    socket.on("callUser", data => {
-        io.to(data.userToCall).emit("callUser", {signal: data.signalData, from: data.from, name: data.name})
-    })
+    socket.on("joinRoom", ({ roomId }) => {
+        socket.join(roomId);
+        socket.to(roomId).emit("userJoined", { signal: null });
+    });
 
-    socket.on("answerCall", (data) => {
-		io.to(data.to).emit("callAccepted", data.signal)
-	})
+    socket.on("returnSignal", ({ roomId, signal }) => {
+        socket.to(roomId).emit("receiveSignal", { signal });
+    });
+
+    socket.on("sendMessage", ({ roomId, message }) => {
+        console.log(`Message in room ${roomId}:`, message);
+
+        // Gửi tin nhắn đến những người trong phòng
+        socket.to(roomId).emit("chatMessage", message);
+    });
+
 
     socket.on('disconnect', () => {
         console.log("a user disconnected", socket.id)
