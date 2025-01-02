@@ -15,6 +15,7 @@ exports.createPayment = async (data, file) => {
         {
             data: {
                 ...data,
+                amount: parseInt(data.amount),
                 image: url,
             }
         }
@@ -23,12 +24,18 @@ exports.createPayment = async (data, file) => {
 }
 
 exports.getPayments = async () => {
-    const list = await db.payment.findMany()
+    const list = await db.payment.findMany(
+        {
+            include: {
+                user: true
+            }
+        }
+    )
     return list
 }
 
 exports.updatePayment = async (id, status) => {
-    const list = await db.payment.update(
+    const result = await db.payment.update(
         {
             where: {
                 id 
@@ -38,4 +45,31 @@ exports.updatePayment = async (id, status) => {
             }
         }
     )
+    if (status === 'Thành công') {
+        const payment = await db.payment.findUnique(
+            {
+                where: {
+                    id
+                },
+                include: {
+                    user: {
+                        select: {
+                            id: true
+                        }
+                    }
+                }
+            }
+        )
+        await db.user.update(
+            {
+                where: {
+                    id: payment.user.id
+                },
+                data: {
+                    totalPrice: parseInt(payment.amount) / 1000
+                }
+            }
+        )
+    }
+    return result
 }

@@ -7,6 +7,7 @@ const { wsRoutes } = require('./workingSchedule')
 const { appointmentRoutes } = require('./appointment')
 const { conversationRoutes } = require('./conversation')
 const { messageRoutes } = require('./message')
+const { paymentRoutes } = require('./payment')
 const router = express.Router()
 
 router.get('/', (req, res) => {
@@ -20,4 +21,5 @@ router.use('/working-schedule', wsRoutes )
 router.use('/appointment', appointmentRoutes)
 router.use('/conversation', conversationRoutes)
 router.use('/message', messageRoutes)
+router.use('/payment', paymentRoutes)
 exports.api = router
