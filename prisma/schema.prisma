@@ -104,6 +104,7 @@ model Appointment {
     noteImage1     String?
     noteImage2     String?
     noteImage3     String?
+    room           String?
     workingShiftId String        @unique
     workingShift   WorkingShifts @relation(fields: [workingShiftId], references: [id], onDelete: Cascade, onUpdate: Cascade)
     doctorId       String

@@ -24,3 +24,12 @@ exports.updatePayment = async (req, res, next) => {
         next(err)
     }
 }
+
+exports.getPaymentByUser = async (req, res, next) => {
+    try {
+        const result = await paymentService.getPaymentByUser(req.params.id)
+        res.status(200).json(result)
+    } catch (err) {
+        next(err)
+    }
+}

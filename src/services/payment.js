@@ -73,3 +73,14 @@ exports.updatePayment = async (id, status) => {
     }
     return result
 }
+
+exports.getPaymentByUser = async (id) => {
+    const result = await db.payment.findMany(
+        {
+            where: {
+                userId: id
+            }
+        }
+    )
+    return result
+}

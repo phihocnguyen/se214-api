@@ -30,6 +30,7 @@ exports.createAppointment = async (data, files) => {
         const newAppointment = await db.appointment.create(
             {
                 data: {
+                    room: Math.floor(100000 + Math.random() * 900000).toString(),
                     status,
                     note,
                     noteImage1: newPaths[0] || '',
@@ -41,6 +42,20 @@ exports.createAppointment = async (data, files) => {
                 }
             }
         )
+        if (newAppointment) {
+            await db.user.update(
+                {
+                    where: {
+                        id: userId
+                    },
+                    data: {
+                        totalPrice: {
+                            decrement: 50
+                        }
+                    }
+                }
+            )
+        }
         return newAppointment
     } catch (err){
         console.log(err)
