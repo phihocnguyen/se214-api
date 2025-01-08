@@ -139,3 +139,45 @@ exports.updateAvatar = async (req, res, next) => {
         next(err)
     }
 }
+
+exports.loginFailed = (req, res) => {
+    res.status(401).json({
+        success: false,
+        message: "Login failed",
+    });
+}
+
+exports.loginSuccess = (req, res) => {
+    if (req.user) {
+        res.status(200).json({
+            success: true,
+            message: "Login successfully",
+            user: req.user,
+        });
+    }
+}
+
+exports.googleLogin = async (req, res) => {
+    try {
+        const existingUser = await prisma.account.findFirst({
+            where: {
+                email: res.email
+            },
+            include: {
+                user: true
+            }
+        })
+        if (existingUser) {
+            const accessToken = jwt.sign({id: existingUser.id, email: existingUser.email, role: existingUser.role}, process.env.ACCESS_TOKEN, {expiresIn: '15m'})
+            const refreshToken = jwt.sign({id: existingUser.id, email: existingUser.email, role: existingUser.role}, process.env.REFRESH_TOKEN)
+            refreshTokens.push(refreshToken)
+            res.cookie('token', refreshToken).json({
+                account: existingUser,
+                accessToken: accessToken
+            })
+        }
+        else res.status(401).json('Cannot log in with Google')
+    } catch (err){
+        console.log(err)
+    }
+}

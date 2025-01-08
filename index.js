@@ -6,6 +6,13 @@ const { authenticateToken } = require('./src/middlewares/token')
 require('dotenv').config()
 const cors = require('cors')
 const { app, server } = require('./src/socket/socket')
+const cookieSession = require('cookie-session')
+const passport = require('passport')
+require('./src/libs/passport');
+
+app.use(cookieSession({ name: "session", keys: ["lama"], maxAge: 86400}));
+app.use(passport.initialize());
+app.use(passport.session());
 app.use(express.json())
 app.use(cors(
     {
